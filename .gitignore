@@ -1,1 +1,7 @@
 .env
+/audio
+.vscode/
+test.rb
+dummy.rb
+music.rb
+relax.rb
