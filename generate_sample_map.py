@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 AUDIO_ROOT = os.getenv("AUDIO_ROOT_PATH", "./audio")        
-OUTPUT_JSON = "./samples.json"
+OUTPUT_JSON = "./audio/samples.json"
 
 def numeric_key(s):
     nums = re.findall(r'\d+', s)
