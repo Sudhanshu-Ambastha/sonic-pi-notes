@@ -5,3 +5,7 @@ test.rb
 dummy.rb
 music.rb
 relax.rb
+*.wav
+*.mp3
+*.mp4
+*.aiff
