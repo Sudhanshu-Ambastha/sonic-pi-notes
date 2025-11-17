@@ -1,9 +1,11 @@
 import os
 import json
 import re
+from dotenv import load_dotenv
 
-AUDIO_ROOT = "root/sonic-pi-notes/audio"         
-OUTPUT_JSON = "./audio/samples.json"
+load_dotenv()
+AUDIO_ROOT = os.getenv("AUDIO_ROOT_PATH", "./audio")        
+OUTPUT_JSON = "./samples.json"
 
 def numeric_key(s):
     nums = re.findall(r'\d+', s)
