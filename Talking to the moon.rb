@@ -1,3 +1,4 @@
+#Talking to the moon - Bruno Mars (https://pianoletternotes.blogspot.com/2021/03/talking-to-moon-by-bruno-mars.html)
 use_bpm 60
 set_volume! 1.5
 
@@ -72,7 +73,7 @@ in_thread do
   sleep 1
   blocks.each do |blk|
     seq = parse_block(blk)
-    play_seq(seq, 0.15)   # ← adjust tempo here
+    play_seq(seq, 0.15)   
     sleep 0.3
   end
 end

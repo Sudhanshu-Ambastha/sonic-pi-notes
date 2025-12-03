@@ -1,9 +1,8 @@
+#I think of you not thinking of me - by far (https://pianoletternotes.blogspot.com/2025/11/i-think-of-you-not-thinking-of-me-by-far.html)
 set_volume! 1.5
 use_bpm 60
 
-default = "path/to/your/music/files/"
-MUSIC_FILE_PATH = default + "i-think-of-you-not-thinking-of-me-by-far.txt"
-NOTE_MAP = default + "piano_key_map.json"
+MUSIC_FILE_PATH = "./i-think-of-you-not-thinking-of-me-by-far.txt"
 
 SMALLEST_TIME_UNIT_RATIO = 1.5
 
