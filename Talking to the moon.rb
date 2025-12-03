@@ -1,90 +1,78 @@
-#Talking to the Moon by Bruno Mars(https://pianoletternotes.blogspot.com/2021/03/talking-to-moon-by-bruno-mars.html)
 use_bpm 60
-use_synth :piano
+set_volume! 1.5
 
-define :custom_pattern_player do |note_map, pattern, opts={}|
-  steps = pattern.gsub("|", "").chars
-  step_length = opts[:step_length] || 0.25
+NOTE_MAP = {
+  'a'=>:a, 'b'=>:b, 'c'=>:c, 'd'=>:d, 'e'=>:e, 'f'=>:f, 'g'=>:g,
+  'A'=>:as,'B'=>:bs, 'C'=>:cs, 'D'=>:ds, 'F'=>:fs, 'G'=>:gs,
+}
+
+define :note_for do |char, oct|
+  base = NOTE_MAP[char]
+  return nil unless base
+  "#{base}#{oct}".to_sym
+end
+
+define :parse_block do |block|
+  lines = block.split("\n").map(&:strip).reject{|l| l.empty? || l =~ /^\d+$/}
   
-  steps.each do |step|
-    if note_map.key?(step)
-      notes = note_map[step]
-      play notes, amp: opts[:amp] || 1, release: 0.1
+  tracks = []
+  
+  lines.each do |line|
+    m = line.match(/(RH|LH):(\d)\|(.+)\|/)
+    next unless m
+    
+    tracks << {
+      oct: m[2].to_i,
+      chars: m[3].chars
+    }
+  end
+  
+  return [] if tracks.empty?
+  
+  width = tracks.map{|t| t[:chars].length}.max
+  
+  seq = []
+  
+  (0...width).each do |i|
+    notes = []
+    
+    tracks.each do |t|
+      ch = t[:chars][i]
+      next if ch == '-' || ch.nil?
+      n = note_for(ch, t[:oct])
+      notes << n if n
     end
-    sleep step_length
+    
+    seq << notes
+  end
+  
+  seq
+end
+
+define :play_seq do |seq, dur|
+  use_synth :piano
+  with_fx :reverb, room: 0.5 do
+    seq.each do |notes|
+      if notes.empty?
+        sleep dur
+      else
+        play notes, sustain: dur*0.8, release: 0.1
+        sleep dur
+      end
+    end
   end
 end
 
-#RH:4|e-----e-----e-----e-----e-|
-#RH:4|G-----G-----G-----G-----G-|
-#RH:3|---b-----b-----b-----b----|
-#LH:3|e-----------------------e-|
-#LH:2|e-----------------------e-|
-# Calculate 16th note length based on 90 BPM
-sixteenth_note_length = 60.0 / 90.0 / 4
-ch1 = [:e4, :g4, :e3, :e2]
-ch2 = [:b3]
-live_loop :piano_loop do
-  note_to_play = {
-    "x" => ch1,
-    "y" => ch2
-  }
-  
-  custom_pattern_player note_to_play,
-    "x---y---x---y---x---y---x---y---",
-    step_length: sixteenth_note_length,
-    amp: 1.2
-end
+file_path = "./talking_to_the_moon.txt"
 
-#RH:4|----e-----e-----e-----e---|
-#RH:4|----G-----G-----G-----G---|
-#RH:3|-b-----b-----b-----b-----b|
-#LH:2|----------------------G--e|
-#LH:2|----------------------b---|
-ch1 = [:e4, :G4]
-ch2 = [:b3]
-ch3 = [:e4, :G4, :G2, :b2]
-ch4 = [:b3, :e2]
-live_loop :piano_loop_2 do
-  notes_to_play = {
-    "a" => ch1,
-    "b" => ch2,
-    "c" => ch3,
-    "d" => ch4
-  }
-  custom_pattern_player notes_to_play,
-    "-b--a--b--a--b--a--b--c--d",
-    step_length: sixteenth_note_length,
-    amp: 1.2
-end
+song = File.read(file_path)
+blocks = song.split(/\n\d+\n/)
 
-#RH:4|-De-De-De--G--------D-D--D|
-#LH:3|--------------------c-----|
-#LH:3|--------------------D-----|
-#LH:2|--G--e--G--e--G--e-----G--|
-#LH:2|--b-----b-----b-----------|
-ch1 = [:D4]
-ch1_2 = [:e4, :G2, :b2]
-ch1_3 = [:e4, :e2]
-ch1_4 = [:G4, :e2]
-ch2 = [:G2, :b2]
-ch2_1 = [:e2]
-ch3 = [:D4, :c3, :D3]
-ch3_2 = [:G2]
-live_loop :piano_loop_3 do
-  notes_to_play = {
-    "a" => ch1,
-    "b" => ch1_2,
-    "c" => ch1_3,
-    "d" => ch1_4,
-    "e" => ch2,
-    "f" => ch2_1,
-    "g" => ch3,
-    "h" => ch3_2
-  }
-  custom_pattern_player notes_to_play,
-    "-ab-ac-ab--d--e--f--g-ah-a",
-    step_length: sixteenth_note_length,
-    amp: 1.2
+in_thread do
+  sleep 1
+  blocks.each do |blk|
+    seq = parse_block(blk)
+    play_seq(seq, 0.15)   # ← adjust tempo here
+    sleep 0.3
+  end
 end
-

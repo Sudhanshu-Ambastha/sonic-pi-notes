@@ -1,6 +1,6 @@
 require 'json'
 
-file = "C:/Users/sudha/OneDrive/Documents/GitHub/sonic-pi-notes/audio/samples.json"
+file = "./audio/samples.json"
 $SAMPLES = JSON.parse(File.read(file), symbolize_names: true)
 
 
