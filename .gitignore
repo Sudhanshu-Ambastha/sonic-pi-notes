@@ -9,3 +9,5 @@ relax.rb
 *.mp3
 *.mp4
 *.aiff
+input_tabs.txt
+input_tabs.rb
